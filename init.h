@@ -1,5 +1,10 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
+#include <stdio.h>
+#include "SDL/SDL_image.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_mixer.h"
+#include <stdlib.h>
 typedef struct{
 SDL_Surface *screen;
 SDL_Surface *back1;
@@ -61,9 +66,11 @@ SDL_Surface *hedi;
  //objects are way to be added here
 }character;
 
-menuComponents initMenu(menuComponents mc);
+menuComponents initMenu();
 backgroundMaps initMaps (backgroundMaps bm);
 object initObject (object o);
 enigme initEngime(enigme e);
 character initChar(character ch);
+Mix_Music initMusic (Mix_Music *music);
+
 #endif 

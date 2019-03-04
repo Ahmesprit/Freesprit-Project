@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "SDL/SDL_image.h"
-#include"SDL/SDL.h"
+#include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
 #include "init.h"
 #include "affichage.h"
@@ -25,8 +25,8 @@ Mix_Music *music;
 music=Mix_LoadMUS("fatrat.mp3");
 Mix_PlayMusic(music,-1);
 
-mc=initMenu(mc);
-showMenu(mc, rmc);
+mc=initMenu();
+showMenu(mc, &rmc);
 while (done == 0){
  while(SDL_PollEvent(&event) == 1){
     switch(event.type){
