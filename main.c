@@ -19,6 +19,15 @@ Mix_Music * music;
 char pause;
 SDL_Event event;
 int done=0;
+	 double d,d1;
+    STATE S=WAITING;
+	positionpers.x=638;
+    positionpers.y=338;
+    positionennemi.x=700;
+    positionennemi.y=338;
+	  SDL_Surface *ennemi=NULL;
+	SDL_Rect positionpers,positionennemi;
+	
 if(SDL_Init(SDL_INIT_VIDEO)!=0){
 printf("unable to initializeSDL:%s \n",SDL_GetError());
 	return 1;
@@ -137,6 +146,37 @@ SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
 }
  
 }
+	
+	
+	
+    ennemi = IMG_Load( "enemy.png" );
+	d= abs(positionpers.x-positionennemi.x);
+     d1= abs(positionpers.y-positionennemi.y);   
+            if (S== WAITING && (d>=50 && d1>=50))
+            {
+              S = WAITING;
+              UpdateEnnemi(S,&positionennemi,dir);
+            }
+            else if (S== WAITING && (d<50 && d1<50))
+            {
+              S = FIGHT;
+              UpdateEnnemi(S,&positionennemi,dir);
+            }
+            else if (S== HAREB && (d>=50 && d1>=50))
+            {
+              S = WAITING;
+              UpdateEnnemi(S,&positionennemi,dir);
+            }
+            else if (S== HAREB && (d<50 & d1<50))
+            {
+              S = FIGHT;
+              UpdateEnnemi(S,&positionennemi,dir);
+            }
+            else if (S== WAITING && (d>=50 && d1>=50))
+            {
+              S = WAITING;
+              UpdateEnnemi(S,&positionennemi,dir);
+            }
 SDL_FreeSurface(screen);
 Mix_FreeMusic(music);
 pause=getchar();
