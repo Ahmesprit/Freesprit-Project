@@ -13,5 +13,5 @@ typedef struct {
 
 enemy initEnm ();
 void showEnm(enemy enm, SDL_Surface * screen);
-
+void UpdateEnnemi(STATE S,SDL_Rect *positionennemi, int dir);
 #endif
