@@ -48,10 +48,20 @@ typedef struct {
    SDL_Surface *map;
    SDL_Rect posMap;
 }backgroundMaps;
+typedef struct{
+   Mix_Chunk * butHover;
+   Mix_Chunk * butClick;
+}soundClicks;
+//this struct is for controlling if music or sound button is pressed to pass it to a function
+typedef struct {
+   int music;
+   int sound;
+}butControl;
 
 void initMenu(menuComponents * mc, menuPosComponents * mpc);
-void showMenu(menuComponents  mc, menuPosComponents mpc, SDL_Surface *screen);
-void playmu();
+void showMenu(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen);
+void initSound(Mix_Music **music, soundClicks *sc);
 backgroundMaps initMaps();
-
+void menuMotion(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, butControl bc,soundClicks *sc);
+void menuClicks(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, Mix_Music *music, soundClicks *sc, butControl *bc);
 #endif 

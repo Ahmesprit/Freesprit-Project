@@ -6,10 +6,6 @@
 #include "SDL/SDL_ttf.h"
 #include "enigme.h"
 
-typedef struct{
-  SDL_Surface * back;
-  FILE * f = NULL;
-}enigme;
 
 enigme initEnigme (){
  e.f = fopen("period.txt", "r");
