@@ -100,12 +100,14 @@ void initSound(Mix_Music **music, soundClicks *sc){
     sc->butClick = Mix_LoadWAV("Resources/mousec.wav");
 }
 
-void menuMotion(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, butControl bc,soundClicks *sc){
+void menuMotion(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, butControl bc,soundClicks *sc, int soundHoverStopFlag){
 static int played = 0;
   if(((event->motion.x <= mpc->posbutgame.x + mc->butgame->w) && (event->motion.x >= mpc->posbutgame.x)) && ((event->motion.y >= mpc->posbutgame.y) && (event->motion.y <= mpc->posbutgame.y + mc->butgame->h))) {
+if(soundHoverStopFlag == 0){
 if(played == 0){
 Mix_PlayChannel(-1, sc->butHover, 0);
 played =1;
+}
 }
 mpc->posbutgame.w=mc->butgame2->w;
 mpc->posbutgame.h=mc->butgame2->h;
@@ -129,9 +131,11 @@ SDL_BlitSurface(mc->butsound,NULL,screen,&mpc->posbutsound);
                     SDL_Flip(screen);
                  }else{  
 if(((event->motion.x <= mpc->posbutsettings.x + mc->butsettings->w) && (event->motion.x >= mpc->posbutsettings.x)) && ((event->motion.y >= mpc->posbutsettings.y) && (event->motion.y <= mpc->posbutsettings.y + mc->butsettings->h))) {
+if(soundHoverStopFlag == 0){
 if(played == 0){
 Mix_PlayChannel(-1, sc->butHover, 0);
 played =1;
+}
 }
 mpc->posbutsettings.w=mc->butsettings2->w;
 mpc->posbutsettings.h=mc->butsettings2->h;
@@ -155,9 +159,11 @@ SDL_BlitSurface(mc->butsound,NULL,screen,&mpc->posbutsound);
                     SDL_Flip(screen);
                  }else{
 if(((event->motion.x <= mpc->posbutshop.x + mc->butshop->w) && (event->motion.x >= mpc->posbutshop.x)) && ((event->motion.y >= mpc->posbutshop.y) && (event->motion.y <= mpc->posbutshop.y + mc->butshop->h))) {
+if(soundHoverStopFlag == 0){
 if(played == 0){
 Mix_PlayChannel(-1, sc->butHover, 0);
 played =1;
+}
 }
 mpc->posbutshop.w=mc->butshop2->w;
 mpc->posbutshop.h=mc->butshop2->h;
@@ -181,9 +187,11 @@ SDL_BlitSurface(mc->butsound,NULL,screen,&mpc->posbutsound);
                     SDL_Flip(screen);
                  }else{
                    if(((event->motion.x <= mpc->posbutcredits.x + mc->butcredits->w) && (event->motion.x >= mpc->posbutcredits.x)) && ((event->motion.y >= mpc->posbutcredits.y) && (event->motion.y <= mpc->posbutcredits.y + mc->butcredits->h)))  {
+if(soundHoverStopFlag == 0){
 if(played == 0){
 Mix_PlayChannel(-1, sc->butHover, 0);
 played =1;
+}
 }
 mpc->posbutcredits.w=mc->butcredits2->w;
 mpc->posbutcredits.h=mc->butcredits2->h;
@@ -207,9 +215,11 @@ SDL_BlitSurface(mc->butcredits2,NULL,screen,&mpc->posbutcredits);
                     SDL_Flip(screen);
                  }else{
  if(((event->motion.x <= mpc->posbutquit.x + mc->butquit->w) && (event->motion.x >= mpc->posbutquit.x)) && ((event->motion.y >= mpc->posbutquit.y) && (event->motion.y <= mpc->posbutquit.y + mc->butquit->h))) {
+if(soundHoverStopFlag == 0){
 if(played == 0){
 Mix_PlayChannel(-1, sc->butHover, 0);
 played =1;
+}
 }
 mpc->posbutquit.w=mc->butquit2->w;
 mpc->posbutquit.h=mc->butquit2->h;
@@ -261,7 +271,7 @@ SDL_BlitSurface(mc->butsound,NULL,screen,&mpc->posbutsound);
   }
 }           
 }
-void menuClicks(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, Mix_Music *music, soundClicks *sc, butControl *bc){
+void menuClicks(menuComponents  *mc, menuPosComponents *mpc, SDL_Surface *screen, SDL_Event *event, Mix_Music *music, soundClicks *sc, butControl *bc, int *soundHoverStopFlag){
 static int pressed = 0;
          if((((event->button.x <= mpc->posbutsound.x + mc->butsound->w) && (event->button.x >= mpc->posbutsound.x)) && ((event->button.y >= mpc->posbutsound.y) && (event->button.y <= mpc->posbutsound.y + mc->butsound->h))) && (bc->sound == 0)) {
          //flip button
@@ -293,6 +303,7 @@ SDL_BlitSurface(mc->butsound2,NULL,screen,&mpc->posbutsound);
 }
 Mix_PlayChannel(-1, sc->butClick, 0);
 pressed = 1;
+*soundHoverStopFlag = 1;
       
 }else{
 if((((event->button.x <= mpc->posbutsound.x + mc->butsound2->w) && (event->button.x >= mpc->posbutsound.x)) && ((event->button.y >= mpc->posbutsound.y) && (event->button.y <= mpc->posbutsound.y + mc->butsound2->h))) && (bc->sound == 1)) {
@@ -325,6 +336,7 @@ SDL_BlitSurface(mc->butsound,NULL,screen,&mpc->posbutsound);
 }
 Mix_PlayChannel(-1, sc->butClick, 0);
 pressed = 0;
+*soundHoverStopFlag = 0;
 }else{
    if(((event->button.x <= mpc->posbutgame.x + mc->butgame->w) && (event->button.x >= mpc->posbutgame.x)) && ((event->button.y >= mpc->posbutgame.y) && (event->button.y <= mpc->posbutgame.y + mc->butgame->h))){
       if(pressed == 0){

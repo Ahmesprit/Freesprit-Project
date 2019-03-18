@@ -16,6 +16,7 @@ int main(){
 menuComponents mc;
 menuPosComponents mpc;
 soundClicks sc;
+int soundHoverStopFlag = 0;
 butControl bc;
 bc.sound = 0; //false: button sound not pressed yet
 bc.music = 0; //false: button music not pressed yet
@@ -50,10 +51,10 @@ while (done == 0){
              }
            break;
            case SDL_MOUSEMOTION:
-                menuMotion(&mc, &mpc, screen, &event, bc, &sc);
+                menuMotion(&mc, &mpc, screen, &event, bc, &sc, soundHoverStopFlag);
            break;
            case SDL_MOUSEBUTTONDOWN:
-                menuClicks(&mc, &mpc, screen, &event, music, &sc, &bc);
+                menuClicks(&mc, &mpc, screen, &event, music, &sc, &bc, &soundHoverStopFlag);
               break;
 }
 }
