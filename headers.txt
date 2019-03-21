@@ -1,0 +1,36 @@
+void set_clips();
+class Cat
+{
+    private:
+    //coordonnées
+    int offSet;
+
+    //sa vitesse de deplacement
+    int velocity;
+
+    //sa frame courante
+    int frame;
+
+    //Son statut d'animation
+    int status;
+
+    public:
+    //Le constructeur permettant l'initialisation des variables
+    Cat();
+    
+    
+    void handle_events();
+
+    //montrer le personnage
+    void show();
+};
+
+class Cat
+{
+    private:
+    int offSet;
+    Timer anim;
+}
+Cat::Cat();
+void Cat::handle_events();
+void Cat::show();

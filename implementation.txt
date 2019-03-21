@@ -1,0 +1,65 @@
+void set_clips()
+{
+    //On coupe la feuille de sprite
+    for(i=0;i<3;i++) {
+        clipsRight[ i ].x = CAT_WIDTH * i;
+        clipsRight[ i ].y = 0;
+        clipsRight[ i ].w = CAT_WIDTH;
+        clipsRight[ i ].h = CAT_HEIGHT;
+
+        clipsLeft[ i ].x = CAT_WIDTH * i;
+        clipsLeft[ i ].y = CAT_HEIGHT;
+        clipsLeft[ i ].w = CAT_WIDTH;
+        clipsLeft[ i ].h = CAT_HEIGHT;
+}
+
+Cat::Cat()
+{
+    //Initialisation des variables de mouvement
+    offSet = 0;
+    velocity = 0;
+
+    //Initialisation des variables d'animation
+    frame = 0;
+    status = CAT_RIGHT;
+
+    //Départ du timer
+    anim.start();
+}
+
+void Cat::show()
+{
+    [...]
+
+    //Si Cat bouge à gauche
+    if( velocity < 0 )
+    {
+        //On prend le personnage de profil gauche
+        status = CAT_LEFT;
+
+        //S'il est l'heure, on change l'animation
+        if( this->anim.get_ticks() >= CAT_DELAI_FRAME ) {
+
+            // On remet le timer à 0
+            anim.start();
+
+            // On passe à la frame suivante
+            frame++;
+        }
+    }
+    //Si Cat bouge à droite
+    else if( velocity > 0 )
+    {
+        //On prend le personnage de profil droit
+        status = CAT_RIGHT;
+
+        //S'il est l'heure, on change l'animation
+        if( this->anim.get_ticks() >= CAT_DELAI_FRAME ) {
+
+            // On remet le timer à 0
+            anim.start();
+
+            // On passe à la frame suivante
+            frame++;
+        }
+    }

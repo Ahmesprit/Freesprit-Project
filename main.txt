@@ -1,0 +1,46 @@
+fil boucle principale 
+//Vitesse de marche du chat (en pixel par seconde)
+const int CAT_VITESSE = 120;
+
+const int PERSO_DELAI_FRAME = 120; // délais entre deux frames (en ms)
+const int PERSO_NB_ANIM = 3; // Nombre de frame d'animation
+
+   
+ //Tant que l'utilisateur n'a pas quitte
+    while( quit == false )
+    {
+        //Mise en route du timer
+        fps.start();
+
+        //Tant qu'il y a un evenement
+        while( SDL_PollEvent( &event ) )
+        {
+            //Recuperation des evenements pour notre "Cat"
+            walk.handle_events();
+
+            //Si l'utilisateur a clique sur le X de la fenetre
+            if( event.type == SDL_QUIT )
+            {
+                //On quitte le programme
+                quit = true;
+            }
+        }
+
+        //Remplissage de l'ecran avec du blanc
+        SDL_FillRect( screen, &screen->clip_rect, SDL_MapRGB( screen->format, 0xFF, 0xFF, 0xFF ) );
+
+        //Affichage du "Cat" sur l'ecran
+        walk.show();
+
+        //Mise a jour de l'ecran
+        if( SDL_Flip( screen ) == -1 )
+        {
+            return 1;
+        }
+
+        //On rend la main tant qu'on en a pas besoin
+        while( fps.get_ticks() < 1000 / FRAMES_PER_SECOND )
+        {
+            //Attente...
+        }
+    }
