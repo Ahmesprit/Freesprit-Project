@@ -32,7 +32,7 @@ void UpdateEnnemi(STATE S,SDL_Rect *positionennemi, int dir)
      case WAITING :
               //AnnimateEnnemi(E,0,e);
               break;
-     case HAREB : 
+     case FIGHT : 
                   //AnnimateEnnemi(E,0,e);
                    if (dir==2)
                    for (i=0; i<5; i++)
