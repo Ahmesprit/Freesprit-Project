@@ -148,42 +148,7 @@ SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
 }
  
 }
-	
-	
-	
-    ennemi = IMG_Load( "enemy.png" );
-	d= abs(positionpers.x-positionennemi.x);
-     d1= abs(positionpers.y-positionennemi.y);   
-            if (S== WAITING && (d>=50 && d1>=50))
-            {
-              S = WAITING;
-              UpdateEnnemi(S,&positionennemi,dir);
-            }
-            else if (S== WAITING && (d<50 && d1<50))
-            {
-              S = FIGHT;
-              UpdateEnnemi(S,&positionennemi,dir);
-            }
-            else if (S== FIGHT && (d>=50 && d1>=50))
-            {
-              S = WAITING;
-              UpdateEnnemi(S,&positionennemi,dir);
-            }
-            else if (S==FIGHT && (d<50 & d1<50))
-            {
-              S = FIGHT;
-              UpdateEnnemi(S,&positionennemi,dir);
-            }
-            else if (S== WAITING && (d>=50 && d1>=50))
-            {
-              S = WAITING;
-              UpdateEnnemi(S,&positionennemi,dir);
-            }
-	
-apply_surface( bg.x, bg.y, background, fenetre );
-        apply_surface( positionpers.x, positionpers.y, image, fenetre );
-        //SDL_BlitSurface(texte, NULL, fenetre, &positiontexte);
-        SDL_BlitSurface(ennemi, NULL, fenetre, &positionennemi);
+
 	
 	
 SDL_FreeSurface(screen);
