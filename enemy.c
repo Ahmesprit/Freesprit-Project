@@ -9,7 +9,7 @@
 
 enemy initEnm (){
   enemy enm;
-  enm.e = IMG_Load("object.png");
+  enm.e = IMG_Load("enemy.png");
 if(enm.e == NULL){
   printf("enable to load the image\n");
 }
@@ -24,41 +24,63 @@ enm.posEnm.w = enm.e->w;
  SDL_Flip (screen);
 }
 
-void UpdateEnnemi(STATE S,SDL_Rect *positionennemi, int dir)
+int rand_pos(int pmax,int pmin)
 {
-	int i;
-   switch (S)
-   {
-     case WAITING :
-              //AnnimateEnnemi(E,0,e);
-              break;
-     case FIGHT : 
-                  //AnnimateEnnemi(E,0,e);
-                   if (dir==2)
-                   for (i=0; i<5; i++)
-                   {
-                    positionennemi->x = positionennemi->x - 3;
-                    positionennemi->y +=(-1/9)*positionennemi->x+2;
-                   }
-                   if (dir==1)
-                   for (i=0; i<5; i++)
-                   {
-                    positionennemi->x += 3;
-                    positionennemi->y -=(-1/9)*positionennemi->x+2;
-                   }
-                   if (dir==4)
-                   for (i=0; i<5; i++)
-                   {
-                    positionennemi->x += 3;
-                    positionennemi->y +=(-1/9)*positionennemi->x+2;
-                   }
-                   if (dir==3)
-                   for (i=0; i<5; i++)
-                   {
-                    positionennemi->x -= 3;
-                    positionennemi->y -=(-1/9)*positionennemi->x+2;
-                   }
-                  break;
-   }
+int pos;
+ srand(time(NULL));
+pos=rand()%(pmax-pmin+1)+pmin;
+return pos;
+}
 
+void deplacement_aleatoire(enemy e,SDL_Surface *screen)
+{
+SDL_Event event;
+int c = 1;
+int tPr = 0, tAct = 0;
+int pos;
+static int k=0;
+char temps[20];
+
+e.pmax_enemy.x=screen->w / 2 ;//- e.image_enemy->w / 2;
+pos=rand_pos(e.pmax_enemy.x,e.pmin_enemy.x);
+SDL_EnableKeyRepeat(10, 10);
+
+    while (c)
+    {
+        SDL_PollEvent(&event); 
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                c = 0;
+                break;
+        }
+
+        tAct = SDL_GetTicks();
+        if (tAct - tPr > 30) 
+        { if(k==0)
+
+                   {
+                     if(e.position_enemy.x<pos)/*pmax)*/
+                          {
+                            e.position_enemy.x++;
+
+                          }
+                     else k=1;
+
+                   }
+              if(k==1)
+                  {
+                    if(e.position_enemy.x>e.pmin_enemy.x)
+                            e.position_enemy.x--;
+                    else
+                         k=0;
+                  }             
+                                  
+            tPr = tAct; 
+        }
+
+        SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 255, 255));
+        SDL_BlitSurface(e.image_enemy, NULL, screen, &e.position_enemy);
+        SDL_Flip(screen);
+    }
 }
