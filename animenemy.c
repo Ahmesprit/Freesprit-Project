@@ -20,12 +20,12 @@ int main(int argc, char** argv)
 	enemy e;
     
     SDL_Surface* bg = NULL;
-    backg = IMG_Load("index.jpeg");
+    bg = IMG_Load("index.jpeg");
     SDL_BlitSurface(bg, NULL, screen, NULL);
     SDL_WM_SetCaption("animation enemy", NULL);
     SDL_Flip(screen);
 
-	//e.spriteleft = IMG_Load("l.png");
+	e.spriteleft = IMG_Load("l.png");
 	e.spriteright = IMG_Load("r.png");
 	e.dst.x = 0;
 	e.dst.y = 0;
