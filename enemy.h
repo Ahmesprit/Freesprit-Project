@@ -13,5 +13,6 @@ typedef struct {
 
 enemy initEnm ();
 void showEnm(enemy enm, SDL_Surface * screen);
-void UpdateEnnemi(STATE S , SDL_Rect *positionennemi, int dir);
+int rand_pos(int pmax,int pmin);
+void deplacement_aleatoire(enemy e,SDL_Surface *screen);
 #endif
