@@ -13,7 +13,7 @@ int solution_e (char image [])
  	}
  	else 	if(strcmp(image,"3.jpg")==0)
  	{
- 		solution =1;	
+ 		solution =3;	
  	}
  	return solution;
  }
