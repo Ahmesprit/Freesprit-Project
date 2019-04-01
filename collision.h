@@ -1,6 +1,10 @@
 #ifndef COLLISION_H_INCLUDED
 #define COLLISION_H_INCLUDED
-
-int detectCollCir (SDL_Surface *obj1 ,SDL_Surface *obj2, SDL_Rect posobj1, SDL_Rect posobj2);
-int detectCollBB(SDL_Surface *image, SDL_Rect position);
+typedef struct {
+  int x;
+  int y;
+}positionPers;
+int detectCollTrig (SDL_Rect rect1, SDL_Rect rect2);
+int detectCollPP (SDL_Surface * BackgroundMasque, SDL_Rect Personnage);
+int detectCollBB (SDL_Rect Personnage , SDL_Rect Ennemi) ;
 #endif

@@ -5,20 +5,77 @@
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_mixer.h"
 
-character initChar (){
-  character chr;
-  int lives = 0;
-  chr.ch = IMG_Load("object.png");
-if(chr.ch == NULL){
+charac initChar (){
+  charac c;
+  c.spriteleft = IMG_Load("Resources/perso_l.png");
+	c.spriteright = IMG_Load("Resources/perso_r.png");
+if((c.spriteleft == NULL) && (c.spriteright == NULL)){
   printf("enable to load the image\n");
 }
-  return chr;
+  return c;
 }
-void showChar(character chr, SDL_Surface * screen){
-chr.posChr.x = 300;
-chr.posChr.y = 300;
-chr.posChr.h = chr.ch->h;
-chr.posChr.w = chr.ch->w;
- SDL_BlitSurface(chr.ch, NULL, screen, &chr.posChr);
- SDL_Flip (screen);
+void showChar(characPos *cp, charac c, SDL_Surface * screen){
+  SDL_Rect camera;
+  camera.x = 0;
+  camera.y = 0;
+  camera.h = 61;
+  camera.w = 65;
+cp->position.x = 200;
+cp->position.y = 500;
+cp->position.h = c.spriteleft->h;
+cp->position.w = c.spriteleft->w;
+ SDL_BlitSurface(c.spriteleft, &camera, screen, &cp->position);
+}
+void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event){
+  SDL_Rect frame;
+  static int inc = 0;
+  if (event.key.keysym.sym == SDLK_RIGHT) {
+    if (inc > 500) {
+       inc = 0;
+    }else{
+    inc = inc + 63;
+  frame.x = inc;
+  frame.y = 0;
+  frame.w = 63;
+  frame.h = 65;
+  SDL_BlitSurface(c->spriteleft, &frame, screen, &cp.position);
+}
+
+}else{
+  if (event.key.keysym.sym == SDLK_LEFT) {
+    if (inc > 500) {
+       inc = 0;
+    }else{
+    inc = inc + 63;
+  frame.x = inc;
+  frame.y = 0;
+  frame.w = 63;
+  frame.h = 65;
+  SDL_BlitSurface(c->spriteright, &frame, screen, &cp.position);
+  }
+  }
+}
+}
+//you must add '-lm' in terminal to link file
+void moveKeyboard (SDL_Event event, SDL_Rect *posobj){
+switch (event.key.keysym.sym){
+       case SDLK_UP:
+        posobj->y-=10;
+	break;
+
+       case SDLK_DOWN:
+       posobj->y+=10;
+
+	break;
+
+	case SDLK_RIGHT:
+       posobj->x+=10;
+
+	break;
+
+	case SDLK_LEFT:
+       posobj->x-=10;
+	break;
+ }
+
 }

@@ -7,12 +7,17 @@
 #include "SDL/SDL_mixer.h"
 
 typedef struct {
- SDL_Surface *ch;
- SDL_Rect posChr;
- int lives;
-}character;
+ SDL_Surface * spriteleft;
+ SDL_Surface * spriteright;
+}charac;
+typedef struct{
+  SDL_Rect pmax;
+  SDL_Rect pmin;
+  SDL_Rect position;
+}characPos;
 
-character initChar ();
-void showChar(character chr, SDL_Surface * screen);
-
+charac initChar ();
+void showChar(characPos *cp, charac c, SDL_Surface * screen);
+void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event);
+void moveKeyboard (SDL_Event event, SDL_Rect *posobj);
 #endif
