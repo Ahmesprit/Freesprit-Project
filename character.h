@@ -19,5 +19,5 @@ typedef struct{
 charac initChar ();
 void showChar(characPos *cp, charac c, SDL_Surface * screen);
 void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event);
-void moveKeyboard (SDL_Event event, SDL_Rect *posobj);
+void moveChar (SDL_Event event, SDL_Rect *posobj);
 #endif

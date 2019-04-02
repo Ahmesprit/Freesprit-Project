@@ -54,7 +54,7 @@ SDL_Color GetPixel (SDL_Surface* pSurface, int x, int y){
   return (color);
 }
 int detectCollPP (SDL_Surface * BackgroundMasque, SDL_Rect Personnage){
-  SDL_Color colobs ={0,0,0} ;
+  SDL_Color colobs ={0,0,0,0} ;
   SDL_Color colgotten;
   positionPers Pos [8];
 int collision = 0, i = 0;

@@ -54,7 +54,6 @@ SDL_WM_SetCaption( "Freesprit", NULL);
 initSound(&music, &sc);
 Mix_PlayMusic(music,-1);
 initMenu(&mc, &mpc);
-initMaps();
 //Game loop starts
 int pass = 0;
 strcpy(pickFromMenu, "");
@@ -79,16 +78,11 @@ while(menuNotOver == 0){
 }
   if (strcmp(pickFromMenu, "playgame") == 0) {
     //translation
+    backgroundMaps bm;
+    bm = initMaps();
     playgame = 1;
-    SDL_Surface * splash;
-    SDL_Rect splashPos;
     Mix_Music * stage1;
-     splash = IMG_Load("Resources/splash1.jpg");
-     splashPos.x = 0;
-     splashPos.y = 0;
-     splashPos.h = splash->h;
-     splashPos.w = splash->w;
-     SDL_BlitSurface(splash,NULL, screen, &splashPos);
+     SDL_BlitSurface(bm.splash,NULL, screen, &bm.splashPos);
      SDL_Flip(screen);
      Mix_PauseMusic();
      stage1 = Mix_LoadMUS("Resources/fatrat.mp3");
@@ -97,96 +91,39 @@ while(menuNotOver == 0){
     //initializing of game
     SDL_Rect camera;
     characPos cp;
-    SDL_Rect posback;
-    SDL_Surface *back;
+    SDL_Rect posback, posLives, posScore;
     charac c;
-    SDL_Surface *mask;
     enemyPos ep;
     enemy e;
+    entities ent;
+    SDL_Surface * timestext, *livestext, *scoretext;
     enigme enig;
     enigmeData ed;
-     char ch[50];
-    SDL_Rect eee;
     int lives = 5;
     int score = 0;
     timer t;
     t.sec = 0;
     t.min = 0;
-      SDL_Surface *hearts;
-      hearts = IMG_Load("Resources/hearts.png");
-    SDL_Rect poshearts;
-    SDL_Rect poslives;
-    SDL_Surface *livestext;
-    SDL_Surface *timestext;
-    TTF_Font *police = NULL;
-    SDL_Surface *scoresurf;
-    SDL_Rect scorerect;
-    SDL_Rect timerect;
-    scorerect.x = 480;
-    scorerect.y = 10;
-      poslives.x = 900;
-      poslives.y = 10;
-      poslives.w = 0;
-      poslives.h = 0;
-    poshearts.x = 910;
-     poshearts.y = 10;
-     poshearts.w = hearts->w;
-     poshearts.h = hearts->h;
-    int x;
+    int x, noscrolling = 1;
     camera.x = 0;
     camera.y = 0;
     camera.w = 960;
     camera.h = 600;
-    back = IMG_Load("Resources/backgroundstage1.png"); //background
-    mask = SDL_LoadBMP("Resources/masque.bmp"); //mask
-    e = initEnm(); //ennemy
+    e = initEnm();
     c = initChar();
     enig = initEnigme();
-    posback.x = 0;
-    posback.y = 0;
-    posback.h = back->h;
-    posback.w = back->w;
     SDL_EnableKeyRepeat(100, 120);
-    if (TTF_Init() < 0) {
-      printf("error\n");
-    }else{
-    SDL_Color noir = {255, 255, 255};
-    police = TTF_OpenFont("/home/ahmeddebbech/Desktop/Freesprit/Bebas-Regular.ttf", 32);
-    if (police == NULL) {
-      printf("error dans open font score\n");
-    }else{
-    sprintf(ch,"%d",lives);
-    livestext=TTF_RenderText_Solid(police, ch, noir);
-    TTF_CloseFont(police);
-    TTF_Quit();
-    }
-    }
-    if(TTF_Init() < 0) {
-        printf("error\n");
-    }else{
-      SDL_Color noir = {255, 255, 255};
-      police = TTF_OpenFont("/home/ahmeddebbech/Desktop/Freesprit/Bebas-Regular.ttf", 32);
-      if (police == NULL) {
-        printf("error dans open font \n");
-      }else{
-      sprintf(ch, "%d", score);
-     scoresurf = TTF_RenderText_Solid(police, ch, noir);
-    TTF_CloseFont(police);
-    TTF_Quit();
-    }
-    }
-    SDL_BlitSurface(back, &camera, screen, NULL);
-    SDL_BlitSurface(hearts, NULL, screen, &poshearts);
-      SDL_BlitSurface(livestext, NULL, screen, &poslives);
-      SDL_BlitSurface(scoresurf, NULL, screen, &scorerect);
+    ent = gameEntities();
+    ent.livestext = updateLives(&lives);
+    ent.scoretext = updateScore(&score);
+    SDL_BlitSurface(bm.map, &camera, screen, NULL);
+      SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
+      SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
+      SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
       showEnm(&ep,e,screen);
       showChar(&cp,c, screen);
-      timestext = gameTime(&t);
-      timerect.x = 10;
-      timerect.y = 10;
-      timerect.h = timestext->h;
-      timerect.w = timestext->w;
-      SDL_BlitSurface(timestext, NULL, screen, &timerect);
+      ent.timestext = gameTime(&t);
+      SDL_BlitSurface(ent.timestext, NULL, screen, &ent.timePos);
         SDL_Flip(screen);
     while(playgame == 1){
       while(SDL_PollEvent(&event) == 1){
@@ -196,17 +133,48 @@ while(menuNotOver == 0){
                     done = 1;
                     playgame = 0;
                    }else{
-                     moveKeyboard (event, &cp.position);
-                     scrolling(&camera, event);
-                     scoresurf = updateScore (&score, screen);
                      moveEnemy(&ep, screen);
-  									 SDL_BlitSurface(back, &camera, screen, NULL);
-                     SDL_BlitSurface(timestext, NULL, screen, &timerect);
-                     animEnm(&e, ep, screen);
-                     animChar(&c, cp, screen,event);
-                     SDL_Flip(screen);
+                     moveChar(event, &cp.position);
+                     if(noscrolling == 1){
+                       scrolling(&camera, event);
+                     }
+                     ent.livestext = updateLives(&lives);
+                     ent.scoretext = updateScore(&score);
+                     SDL_BlitSurface(bm.map, &camera, screen, NULL);
+                       SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
+                       SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
+                       SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
+                       animEnm(&e, ep,screen);
+                       animChar(&c, cp, screen, event);
+                         SDL_Flip(screen);
+                         if (detectCollPP(bm.mask, cp.position) == 1) {
+                           noscrolling = 0;
+                         }else{
+                    if(detectCollBB(cp.position, ep.position_enemy) == 1){
+                      if(lives == 0){
+                        SDL_Surface * lose;
+                        lose = IMG_Load("Resources/lose.jpg");
+                        SDL_Rect poslose = {0,0,lose->h, lose->w};
+                        SDL_BlitSurface(lose, NULL, screen, &poslose);
+                        SDL_Flip(screen);
+                     }else{
+                       lives--;
+                       ent.livestext = updateLives(&lives);
+                       ent.scoretext = updateScore(&score);
+                       cp.position.x -= 40;
+                       cp.position.y -= 40;
+                       SDL_BlitSurface(bm.map, &camera, screen, NULL);
+                         SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
+                         SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
+                         SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
+                         animEnm(&e, ep,screen);
+                         animChar(&c, cp, screen, event);
+                           SDL_Flip(screen);
+                      }
+                    }
                    }
-           }
+                 }
+                 }
     }
   }
 }else{

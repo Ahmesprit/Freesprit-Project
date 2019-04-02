@@ -86,17 +86,17 @@ int resolutionEnigme(enigmeData ed, SDL_Event event){
   switch(event.type){
          case SDL_KEYDOWN:
             if(event.key.keysym.sym == SDLK_1){
-             if (strcmp (ed.c1, ed.x) == 0) {
+             if (strcmp (ed.c1, "bleu") == 0) {
                return 1;
              }
             }else{
               if(event.key.keysym.sym == SDLK_2){
-                if (strcmp (ed.c2, ed.x) == 0) {
+                if (strcmp (ed.c2, "bleu") == 0) {
                   return 1;
                 }
              }else{
                if(event.key.keysym.sym == SDLK_3){
-                 if (strcmp (ed.c3, ed.x) == 0) {
+                 if (strcmp (ed.c3, "bleu") == 0) {
                    return 1;
                  }
                }

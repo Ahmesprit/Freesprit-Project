@@ -179,10 +179,16 @@ SDL_BlitSurface(mc->butquit2,NULL,screen,&mpc->posbutquit);
 }
 backgroundMaps initMaps(){
 backgroundMaps bm;
-   bm.map = IMG_Load("Resources/backstage1.jpg");
-   if(bm.map == NULL){
+   bm.map = IMG_Load("Resources/backgroundstage1.png");
+	 bm.mask = SDL_LoadBMP("Resources/masque.bmp");
+	 bm.splash = IMG_Load("Resources/splash1.jpg");
+   if((bm.map == NULL) && (bm.mask == NULL)&& (bm.splash == NULL)){
       printf("enable to load first map\n");
     }
+		bm.splashPos.x=0;
+ bm.splashPos.y=0;
+ bm.splashPos.w=bm.splash->w;
+ bm.splashPos.h=bm.splash->h;
    bm.posMap.x=0;
 bm.posMap.y=0;
 bm.posMap.w=bm.map->w;

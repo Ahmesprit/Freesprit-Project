@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-SDL_Surface * updateScore(int *score, SDL_Surface * screen){
+SDL_Surface * updateScore(int *score){
   char ch[10];
   SDL_Surface *scoring = NULL;
   TTF_Font *police = NULL;
@@ -28,25 +28,20 @@ TTF_Quit();
 }
    return scoring;
 }
-SDL_Surface * updateLives(int *lives, SDL_Surface *hearts){
+SDL_Surface * updateLives(int *lives){
 char ch[10];
   SDL_Rect poslives;
-SDL_Rect poshearts;
 SDL_Surface *livestext;
   poslives.x=900;
   poslives.y=10;
   poslives.w = 0;
   poslives.h = 0;
- poshearts.x= 910;
-  poshearts.y= 10;
-  poshearts.w = hearts->w;
-  poshearts.h = hearts->h;
 	if (TTF_Init() < 0) {
     printf("error\n");
 }else{
   TTF_Font *police = NULL;
   SDL_Color noir = {255, 255, 255};
-  police = TTF_OpenFont("/home/ahmed/Desktop/Freesprit/Bebas-Regular.ttf", 32);
+  police = TTF_OpenFont("/home/ahmeddebbech/Desktop/Freesprit/Bebas-Regular.ttf", 32);
   if (police == NULL) {
     printf("error dans open font\n");
   }else{
@@ -90,17 +85,32 @@ void scrolling (SDL_Rect * camera, SDL_Event event){
         switch (event.key.keysym.sym){
 
 	case SDLK_RIGHT:
-       camera->x = camera->x + 100;
+       camera->x = camera->x + 20;
                if(camera->x >= 4264-960){
                           camera->x = 0;
                }
 	break;
 
 	case SDLK_LEFT:
-       camera->x = camera->x - 100;
+       camera->x = camera->x - 20;
                if(camera->x <= 4264-960){
                           camera->x = 0;
                }
 	break;
  }
+}
+entities gameEntities(){
+  entities e;
+  e.hearts = IMG_Load("Resources/hearts.png");
+  e.scorePos.x = 480;
+  e.scorePos.y = 10;
+    e.posLives.x = 900;
+    e.posLives.y = 10;
+    e.timePos.x = 10;
+    e.timePos.y = 10;
+  e.posheart.x = 910;
+  e. posheart.y = 10;
+   e.posheart.w = e.hearts->w;
+   e.posheart.h = e.hearts->h;
+   return e;
 }

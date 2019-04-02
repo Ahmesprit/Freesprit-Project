@@ -43,9 +43,11 @@ SDL_Rect posbuthelp;
 SDL_Rect posbutquit;
 SDL_Rect posbutquit2;
 }menuPosComponents;
-
 typedef struct {
    SDL_Surface *map;
+   SDL_Surface *mask;
+   SDL_Surface * splash;
+   SDL_Rect splashPos;
    SDL_Rect posMap;
 }backgroundMaps;
 typedef struct{

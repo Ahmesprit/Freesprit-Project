@@ -68,29 +68,30 @@ enm->position_enemy.w = e.spriteleft->w;
 void animEnm (enemy * e, enemyPos ep, SDL_Surface *screen){
   SDL_Rect frame;
   static int inc = 0;
-  static int i = 1;
-  static int k = 1;
-  if (i<=8) {
-  inc = inc + 63;
+  static int i = 0;
+  static int k = 0;
+  if (i<=7) {
+  inc = inc + 64;
   frame.x = inc;
   frame.y = 0;
-  frame.w = 63;
-  frame.h = 65;
+  frame.w = 64;
+  frame.h = 61;
   SDL_BlitSurface(e->spriteleft, &frame, screen, &ep.position_enemy);
   i++;
 }else{
   i=9; inc = 0;
-  if (k <= 8) {
-    inc = inc + 63;
+  if (k <= 6) {
+    inc = inc + 64;
   frame.x = inc;
   frame.y = 0;
-  frame.w = 63;
-  frame.h = 65;
+  frame.w = 64;
+  frame.h = 61;
   SDL_BlitSurface(e->spriteright, &frame, screen, &ep.position_enemy);
   k++;
 }else{
   k = 9;
-  i=1;
+  i=0;
+  inc =0;
 }
 }
 }

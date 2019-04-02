@@ -29,9 +29,16 @@ cp->position.w = c.spriteleft->w;
 void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event){
   SDL_Rect frame;
   static int inc = 0;
-  if (event.key.keysym.sym == SDLK_RIGHT) {
-    if (inc > 500) {
+  static int incc = 0;
+  if ((event.key.keysym.sym == SDLK_RIGHT) || (event.key.keysym.sym == SDLK_UP)) {
+    incc =0;
+    if (inc > 440){
        inc = 0;
+     frame.x = inc;
+     frame.y = 0;
+     frame.w = 63;
+     frame.h = 65;
+     SDL_BlitSurface(c->spriteleft, &frame, screen, &cp.position);
     }else{
     inc = inc + 63;
   frame.x = inc;
@@ -42,12 +49,19 @@ void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event){
 }
 
 }else{
-  if (event.key.keysym.sym == SDLK_LEFT) {
-    if (inc > 500) {
-       inc = 0;
+  if ((event.key.keysym.sym == SDLK_LEFT) || (event.key.keysym.sym == SDLK_DOWN)) {
+inc =0;
+    if (incc > 440) {
+       incc = 0;
+       incc = incc + 63;
+     frame.x = incc;
+     frame.y = 0;
+     frame.w = 63;
+     frame.h = 65;
+     SDL_BlitSurface(c->spriteright, &frame, screen, &cp.position);
     }else{
-    inc = inc + 63;
-  frame.x = inc;
+    incc = incc + 63;
+  frame.x = incc;
   frame.y = 0;
   frame.w = 63;
   frame.h = 65;
@@ -57,22 +71,18 @@ void animChar (charac * c, characPos cp, SDL_Surface *screen, SDL_Event event){
 }
 }
 //you must add '-lm' in terminal to link file
-void moveKeyboard (SDL_Event event, SDL_Rect *posobj){
+void moveChar (SDL_Event event, SDL_Rect *posobj){
 switch (event.key.keysym.sym){
        case SDLK_UP:
         posobj->y-=10;
 	break;
-
        case SDLK_DOWN:
        posobj->y+=10;
-
 	break;
 
 	case SDLK_RIGHT:
        posobj->x+=10;
-
 	break;
-
 	case SDLK_LEFT:
        posobj->x-=10;
 	break;
