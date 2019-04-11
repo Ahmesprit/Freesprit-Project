@@ -1,144 +1,96 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "SDL/SDL_image.h"
-#include "SDL/SDL.h"
-#include "SDL/SDL_mixer.h"
-#include "background.h"
-#include "collision.h"
-#include "object.h"
-#include "management.h"
-#include "mouvement.h"
-#include "character.h"
-#include "enigme.h"
-#include "enemy.h"
-int main(){
-menuComponents mc;
-menuPosComponents mpc;
-SDL_Surface *screen;
-Mix_Music * music;
-char pause;
-SDL_Event event;
-int done=0;
-if(SDL_Init(SDL_INIT_VIDEO)!=0){
-printf("unable to initializeSDL:%s \n",SDL_GetError());
-	return 1;
-}
-screen = SDL_SetVideoMode(960,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
-if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS,1024)==-1){
-	printf("No sounds %s\n",Mix_GetError());
-        return 1;
-}
+#include<stdio.h>
+#include<stdlib.h>
+#include<SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include "animChar.h"
 
-playmu();
-initMenu(&mc, &mpc);
-showMenu(mc, mpc, screen);
-while (done == 0){
- while(SDL_PollEvent(&event) == 1){
-    switch(event.type){
-           case SDL_KEYDOWN:
-             if(event.key.keysym.sym == SDLK_UP){
-                 done = 1;
-             }
-           break;
-           case SDL_MOUSEMOTION:
-                if(((event.motion.x <= 350) && (event.motion.x >= 150)) && ((event.motion.y >= 220) && (event.motion.y <= 240))) {
-mpc.posbutgame.w=mc.butgame2->w;
-mpc.posbutgame.h=mc.butgame2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butsettings,NULL,screen,&mpc.posbutsettings);
-SDL_BlitSurface(mc.butshop,NULL,screen,&mpc.posbutshop);
-SDL_BlitSurface(mc.butcredits,NULL,screen,&mpc.posbutcredits);
-SDL_BlitSurface(mc.butquit,NULL,screen,&mpc.posbutquit);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-                    SDL_BlitSurface(mc.butgame2,NULL,screen,&mpc.posbutgame);
-                    SDL_Flip(screen);
-                 }else{
-                 
-if(((event.motion.x <= 350) && (event.motion.x >= 150)) && ((event.motion.y >= 270) && (event.motion.y <= 300))) {
-mpc.posbutsettings.w=mc.butsettings2->w;
-mpc.posbutsettings.h=mc.butsettings2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butgame,NULL,screen,&mpc.posbutgame);
-SDL_BlitSurface(mc.butshop,NULL,screen,&mpc.posbutshop);
-SDL_BlitSurface(mc.butcredits,NULL,screen,&mpc.posbutcredits);
-SDL_BlitSurface(mc.butquit,NULL,screen,&mpc.posbutquit);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-                    SDL_BlitSurface(mc.butsettings2,NULL,screen,&mpc.posbutsettings);
-                    SDL_Flip(screen);
-                 }else{
-if(((event.motion.x <= 350) && (event.motion.x >= 150)) && ((event.motion.y >= 320) && (event.motion.y <= 350))) {
-mpc.posbutshop.w=mc.butshop2->w;
-mpc.posbutshop.h=mc.butshop2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butgame,NULL,screen,&mpc.posbutgame);
-SDL_BlitSurface(mc.butsettings,NULL,screen,&mpc.posbutsettings);
-SDL_BlitSurface(mc.butcredits,NULL,screen,&mpc.posbutcredits);
-SDL_BlitSurface(mc.butquit,NULL,screen,&mpc.posbutquit);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-                    SDL_BlitSurface(mc.butshop2,NULL,screen,&mpc.posbutshop);
-                    SDL_Flip(screen);
-                 }else{
-                   if(((event.motion.x <= 350) && (event.motion.x >= 150)) && ((event.motion.y >= 370) && (event.motion.y <= 400))) {
-mpc.posbutcredits.w=mc.butcredits2->w;
-mpc.posbutcredits.h=mc.butcredits2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butgame,NULL,screen,&mpc.posbutgame);
-SDL_BlitSurface(mc.butsettings,NULL,screen,&mpc.posbutsettings);
-SDL_BlitSurface(mc.butshop,NULL,screen,&mpc.posbutshop);
-SDL_BlitSurface(mc.butquit,NULL,screen,&mpc.posbutquit);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-SDL_BlitSurface(mc.butcredits2,NULL,screen,&mpc.posbutcredits);
-                    SDL_Flip(screen);
-                 }else{
- if(((event.motion.x <= 350) && (event.motion.x >= 150)) && ((event.motion.y >= 420) && (event.motion.y <= 450))) {
-mpc.posbutquit.w=mc.butquit2->w;
-mpc.posbutquit.h=mc.butquit2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butgame,NULL,screen,&mpc.posbutgame);
-SDL_BlitSurface(mc.butsettings,NULL,screen,&mpc.posbutsettings);
-SDL_BlitSurface(mc.butshop,NULL,screen,&mpc.posbutshop);
-SDL_BlitSurface(mc.butcredits,NULL,screen,&mpc.posbutcredits);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-SDL_BlitSurface(mc.butquit2,NULL,screen,&mpc.posbutquit);
-           SDL_Flip(screen);
-                 }else{
-mpc.posbutquit.w=mc.butquit2->w;
-mpc.posbutquit.h=mc.butquit2->h;
-SDL_BlitSurface(mc.back,NULL,screen,&mpc.posback);
-SDL_BlitSurface(mc.butgame,NULL,screen,&mpc.posbutgame);
-SDL_BlitSurface(mc.butsettings,NULL,screen,&mpc.posbutsettings);
-SDL_BlitSurface(mc.butshop,NULL,screen,&mpc.posbutshop);
-SDL_BlitSurface(mc.butcredits,NULL,screen,&mpc.posbutcredits);
-SDL_BlitSurface(mc.buthelp,NULL,screen,&mpc.posbuthelp);
-SDL_BlitSurface(mc.butquit,NULL,screen,&mpc.posbutquit);
-SDL_BlitSurface(mc.butmusic,NULL,screen,&mpc.posbutmusic);
-SDL_BlitSurface(mc.butsound,NULL,screen,&mpc.posbutsound);
-                    SDL_Flip(screen);
-             
- }  
-             
- }  
- }              
-  }
-}           
+int main(int argc,char** argv)
+{
+SDL_Init(SDL_INIT_EVERYTHING);
+SDL_Surface*screen;
+SDL_Surface*image;
 
-           break;
+screen=SDL_SetVideoMode(960,600,32,SDL_SWSURFACE);
+int running=1;
+SDL_Rect rect;
+int frame=0;
+rect.x=15;
+rect.y=15;
+rect.w=25;
+rect.h=25;
+image=IMG_Load("run.png");
+SDL_Rect rects[8];
+setrects(rects);
+SDL_SetColorKey(image, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 0x00, 0xff, 0xff));
+while(running)
+{
+
+                SDL_Event event;
+                while(SDL_PollEvent(&event)) {
+                        switch(event.type) {
+                                case SDL_QUIT:
+                                        running = 0;
+                                        break;
+						}
+					}
+SDL_FillRect(screen,&screen->clip_rect,0x00);
+SDL_FillRect(screen,&rect,0x00);
+SDL_Rect rect;
+rect.x=250;
+rect.y=150;
+SDL_BlitSurface(image,&rects[frame],screen,&rect);
+SDL_Flip(screen);
+frame++;
+if(frame==9){
+frame=0;
 }
 }
- 
-}
-SDL_FreeSurface(screen);
-Mix_FreeMusic(music);
-pause=getchar();
+SDL_FreeSurface(image);
+SDL_Quit();
+
 return 0;
 }
+  void setrects(SDL_Rect* clip){
+clip[0].x=0;
+clip[0].y=0;
+clip[0].w=114;
+clip[0].h=160;
+
+clip[1].x=114;
+clip[1].y=0;
+clip[1].w=114;
+clip[1].h=160;
+
+clip[2].x=228;
+clip[2].y=0;
+clip[2].w=114;
+clip[2].h=160;
+
+clip[3].x=342;
+clip[3].y=0;
+clip[3].w=114;
+clip[3].h=160;
+
+clip[4].x=456;
+clip[4].y=0;
+clip[4].w=114;
+clip[4].h=160;
+
+clip[5].x=570;
+clip[5].y=0;
+clip[5].w=114;
+clip[5].h=160;
+
+clip[6].x=684;
+clip[6].y=0;
+clip[6].w=114;
+clip[6].h=160;
+
+clip[7].x=798;
+clip[7].y=0;
+clip[7].w=114;
+clip[7].h=160;
+
+
+}
+
