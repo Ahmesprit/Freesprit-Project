@@ -3,6 +3,7 @@
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
+#include "SDL/SDL_ttf.h"
 #include "background.h"
 #include "collision.h"
 #include "character.h"
@@ -12,21 +13,18 @@
 #include "menubutton.h"
 #include <string.h>
 //this struct is for generat settings of the game
-typedef struct {
-  int sound;
-  int music;
-  int time; // to change look and fill of the time
-  int score; // to change look and fill of the score
-}settings;
 
 int main(){
 menuComponents mc;
 menuPosComponents mpc;
-settingsComponents setc;
-settingsPosComponents spc;
+settings set;
+credits cred;
+help h;
+shop sh;
+backup b;
+state sta;
 soundClicks sc;
 char pickFromMenu[50];
-int soundHoverStopFlag = 0;
 butControl bc;
 bc.sound = 0; //false: button sound not pressed yet
 bc.music = 0; //false: button music not pressed yet
@@ -34,9 +32,9 @@ SDL_Surface *screen;
 Mix_Music * music;
 char pause;
 SDL_Event event;
-int menuNotOver = 0;
+int menuNotOver = 0, quitsection = 0;
 int done=0;
-int playgame = 2;
+int playgame = 2, stopMenu=1, soundHoverStopFlag;
 //initializing the screen
 if(SDL_Init(SDL_INIT_VIDEO)!=0){
 printf("unable to initializeSDL:%s \n",SDL_GetError());
@@ -59,15 +57,27 @@ int pass = 0;
 strcpy(pickFromMenu, "");
 while (done == 0){
 //poll event for menu
+stopMenu = 1; pass = 0;
 while(menuNotOver == 0){
+  if(stopMenu == 1){
   showMenu(&mc, &mpc, screen, bc);
+   }
  while((SDL_PollEvent(&event) == 1) && (pass == 0)){
       switch(event.type){
+        case SDL_QUIT:
+        menuNotOver = 1;
+        done =1;
+        pass = 1;
+        break;
            case SDL_MOUSEMOTION:
-                menuMotion(&mc, &mpc, screen, &event, bc, &sc, soundHoverStopFlag);
+                if(menuMotion(&mc, &mpc, screen, &event, bc, &sc) == 1){
+                     stopMenu = 0;
+                   }else{
+                     stopMenu = 1;
+                   }
            break;
            case SDL_MOUSEBUTTONDOWN:
-                menuClicks(&mc, &mpc, screen, &event, music, &sc, &bc, &soundHoverStopFlag, pickFromMenu);
+                menuClicks(&mc, &mpc, screen, &event, music, &sc, &bc, pickFromMenu);
                 if (strcmp(pickFromMenu, "") != 0) {
                 	pass = 1;
                   menuNotOver = 1;
@@ -112,7 +122,7 @@ while(menuNotOver == 0){
     e = initEnm();
     c = initChar();
     enig = initEnigme();
-    SDL_EnableKeyRepeat(100, 120);
+    SDL_EnableKeyRepeat(10, 10);
     ent = gameEntities();
     ent.livestext = updateLives(&lives);
     ent.scoretext = updateScore(&score);
@@ -125,28 +135,44 @@ while(menuNotOver == 0){
       ent.timestext = gameTime(&t);
       SDL_BlitSurface(ent.timestext, NULL, screen, &ent.timePos);
         SDL_Flip(screen);
-    while(playgame == 1){
+    while(playgame == 1 ){
       while(SDL_PollEvent(&event) == 1){
          switch(event.type){
+           case SDL_QUIT:
+               playgame = 0;
+             done =1;
+            break;
                 case SDL_KEYDOWN:
                    if(event.key.keysym.sym == SDLK_m){
                     done = 1;
                     playgame = 0;
                    }else{
+                     score++;
                      moveEnemy(&ep, screen);
                      moveChar(event, &cp.position);
-                     if(noscrolling == 1){
+                     if((cp.position.x >= 930) && ((camera.x <= 4264) && (camera.x >= 0))){
                        scrolling(&camera, event);
-                     }
                      ent.livestext = updateLives(&lives);
                      ent.scoretext = updateScore(&score);
-                     SDL_BlitSurface(bm.map, &camera, screen, NULL);
+                     cp.position.x = 10;
+                       SDL_BlitSurface(bm.map, &camera, screen, NULL);
                        SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
                        SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
                        SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
                        animEnm(&e, ep,screen);
                        animChar(&c, cp, screen, event);
-                         SDL_Flip(screen);
+                       SDL_Flip(screen);
+                    }else{
+                      ent.livestext = updateLives(&lives);
+                      ent.scoretext = updateScore(&score);
+                      SDL_BlitSurface(bm.map, &camera, screen, NULL);
+                        SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
+                        SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
+                        SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
+                        animEnm(&e, ep,screen);
+                        animChar(&c, cp, screen, event);
+                        SDL_Flip(screen);
+                    }
                          if (detectCollPP(bm.mask, cp.position) == 1) {
                            noscrolling = 0;
                          }else{
@@ -179,27 +205,103 @@ while(menuNotOver == 0){
   }
 }else{
 	if (strcmp(pickFromMenu, "settings") == 0) {
-		//poll event for settings window
-		pass =0;
-///code here
-		 while((SDL_PollEvent(&event) == 1) && (pass == 0)){
-					switch(event.type){
-							 case SDL_MOUSEBUTTONDOWN:
-										if (strcmp(pickFromMenu, "") != 0) {
-											pass = 1;
-										}
-									break;
-		     }
-		}
+    SDL_PollEvent(&event);
+    if(event.type == SDL_QUIT){
+      done = 1;
+    }else{
+    set = initSettings();
+		quitsection = 0;
+		while(quitsection == 0){
+		b = restore();
+    showSettings(set, screen, b);
+    SDL_Flip(screen);
+          SDL_PollEvent(&event);
+        switch(event.type){
+          case SDL_MOUSEBUTTONDOWN:
+       quitsection = clicksSettings(set,event);
+       if(quitsection == 1){
+         strcpy(pickFromMenu, "");
+         menuNotOver = 0;
+       }
+       break;
+     }
+    }
+  }
 	}else{
 		if (strcmp(pickFromMenu, "shop") == 0) {
-
+			sta = restoreState();
+			SDL_PollEvent(&event);
+			if(event.type == SDL_QUIT){
+				done =1;
+			}else{
+			sh = initShop();
+			showShop(sh, screen, sta);
+			SDL_Flip(screen);
+			quitsection = 0;
+			while(quitsection == 0){
+						SDL_PollEvent(&event);
+					switch(event.type){
+						case SDL_MOUSEBUTTONDOWN:
+				 quitsection = clicksShop(sh,event,&sta, screen);
+				 SDL_Flip(screen);
+				 if(quitsection == 1){
+					 strcpy(pickFromMenu, "");
+					 menuNotOver = 0;
+				 }
+				 break;
+				 case SDL_MOUSEMOTION:
+				 showShop(sh, screen, sta);
+				 SDL_Flip(screen);
+				 break;
+			 }
+			}
+		}
 		}else{
 			if (strcmp(pickFromMenu, "credits") == 0) {
-
+        SDL_PollEvent(&event);
+        if(event.type == SDL_QUIT){
+          done =1;
+        }else{
+        cred = initCredits();
+        showCredits(cred, screen);
+        SDL_Flip(screen);
+        quitsection = 0;
+        while(quitsection == 0){
+              SDL_PollEvent(&event);
+            switch(event.type){
+              case SDL_MOUSEBUTTONDOWN:
+           quitsection = clicksCredits(cred,event);
+           if(quitsection == 1){
+             strcpy(pickFromMenu, "");
+             menuNotOver = 0;
+           }
+           break;
+         }
+        }
+      }
 			}else{
 				if (strcmp(pickFromMenu, "help") == 0){
-
+          SDL_PollEvent(&event);
+          if(event.type == SDL_QUIT){
+            done =1;
+          }else{
+          h = initHelp();
+          showHelp(h, screen);
+          SDL_Flip(screen);
+          quitsection = 0;
+          while(quitsection == 0){
+                SDL_PollEvent(&event);
+              switch(event.type){
+                case SDL_MOUSEBUTTONDOWN:
+             quitsection = clicksHelp(h,event);
+             if(quitsection == 1){
+               strcpy(pickFromMenu, "");
+               menuNotOver = 0;
+            }
+             break;
+           }
+          }
+        }
 				}else{
           if (strcmp(pickFromMenu, "quit") == 0){
                    done =1;

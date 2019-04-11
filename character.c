@@ -74,10 +74,10 @@ inc =0;
 void moveChar (SDL_Event event, SDL_Rect *posobj){
 switch (event.key.keysym.sym){
        case SDLK_UP:
-        posobj->y-=10;
+        posobj->y-=30;
 	break;
        case SDLK_DOWN:
-       posobj->y+=10;
+       posobj->y+=30;
 	break;
 
 	case SDLK_RIGHT:

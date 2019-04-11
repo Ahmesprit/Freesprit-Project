@@ -41,7 +41,7 @@ SDL_Surface *livestext;
 }else{
   TTF_Font *police = NULL;
   SDL_Color noir = {255, 255, 255};
-  police = TTF_OpenFont("/home/ahmeddebbech/Desktop/Freesprit/Bebas-Regular.ttf", 32);
+  police = TTF_OpenFont("Bebas-Regular.ttf", 32);
   if (police == NULL) {
     printf("error dans open font\n");
   }else{
@@ -85,17 +85,11 @@ void scrolling (SDL_Rect * camera, SDL_Event event){
         switch (event.key.keysym.sym){
 
 	case SDLK_RIGHT:
-       camera->x = camera->x + 20;
-               if(camera->x >= 4264-960){
-                          camera->x = 0;
-               }
+       camera->x = camera->x + 480;
 	break;
 
 	case SDLK_LEFT:
-       camera->x = camera->x - 20;
-               if(camera->x <= 4264-960){
-                          camera->x = 0;
-               }
+       camera->x = camera->x - 480;
 	break;
  }
 }
