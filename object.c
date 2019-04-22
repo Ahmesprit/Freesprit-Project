@@ -1,9 +1,22 @@
+
+/**
+* @file object.c
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "object.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_mixer.h"
+
+
+/**
+* @brief initialize object
+* @param Nothing
+* @return an object
+*/
+
 
 object initObj (){
   object o;
@@ -13,6 +26,14 @@ if(o.obj == NULL){
 }
   return o;
 }
+
+/**
+* @brief show the object
+* @param o the object
+* @param screen the screen
+* @return Nothing
+*/
+
 void showObj(object o, SDL_Surface * screen){
 o.posObj.x = 300;
 o.posObj.y = 300;

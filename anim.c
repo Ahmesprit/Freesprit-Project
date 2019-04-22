@@ -1,3 +1,7 @@
+/*!
+* @file anim.c
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "anim.h"
@@ -6,6 +10,14 @@
 #include "SDL/SDL_mixer.h"
 #include <time.h>
 
+/**
+* @brief choose random pos .
+* @param pmax maximal position 
+* @param pmin minimum position
+* @return position
+*/
+
+
 
 int rand_pos(int pmax,int pmin){
 int pos;
@@ -13,6 +25,13 @@ int pos;
 pos=rand()%(pmax-pmin+1)+pmin;
 return pos;
 }
+
+/**
+* @brief moving the ennemy .
+* @param screen the screen
+* @param e the enemy's position
+* @return int moving to right or left
+*/
 
 int moveEnemy (enemyPos * e, SDL_Surface *screen){
 SDL_Event event;
@@ -47,6 +66,16 @@ pos = rand_pos(e->pmax_enemy.x, e->pmin_enemy.x);
         }
         return 0;
 }
+
+
+/**
+* @brief animate enemy
+* @param e the enemy
+* @param ep enemy's position
+* @param asMovement moving right or left
+* @param screen the screen
+* @return nothing
+*/
 
 void animEnm (enemy * e, enemyPos ep, SDL_Surface *screen, int asMovement){
   SDL_Rect frame;

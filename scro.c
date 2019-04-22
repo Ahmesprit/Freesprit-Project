@@ -1,3 +1,7 @@
+/**
+* @file scro.c
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "SDL/SDL.h"
@@ -6,6 +10,15 @@
 #include "SDL/SDL_ttf.h"
 #include "scro.h"
 #include <string.h>
+
+/**
+* @brief scrolling the background
+* @param camera the camera
+* @param event the event
+* @return nothing
+*/
+
+
 void scrolling (SDL_Rect * camera, SDL_Event event){
 
         switch (event.key.keysym.sym){
