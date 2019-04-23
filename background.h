@@ -1,57 +1,22 @@
-#ifndef BACKGROUND_H_INCLUDED
-#define BACKGROUND_H_INCLUDED
-#include <stdio.h>
-#include "SDL/SDL_image.h"
-#include "SDL/SDL.h"
-#include "SDL/SDL_mixer.h"
-#include <stdlib.h>
+#ifndef BACKGROUND_H
+#define BACKGROUND_H
+/**
+* @struct Background
+* @brief struct for Background
+*/
+#include <SDL/SDL.h>
+#include "defs.h"
 
-typedef struct{
-SDL_Surface *back;
-SDL_Surface *butgame;
-SDL_Surface *butsettings;
-SDL_Surface *butshop;
-SDL_Surface *butgame2;
-SDL_Surface *butsettings2;
-SDL_Surface *butshop2;
-SDL_Surface *butcredits2;
-SDL_Surface *butcredits;
-SDL_Surface *butsound;
-SDL_Surface *butmusic;
-SDL_Surface *butsound2;
-SDL_Surface *butmusic2;
-SDL_Surface *buthelp;
-SDL_Surface *butquit;
-SDL_Surface *butquit2;
-}menuComponents;
+struct Background{
+	SDL_Surface *backgroundImg; /*!< Surface. */
+	SDL_Surface *backgroundCollide; /*!< Surface. */
+	SDL_Rect backgroundPos; /*!< Rectangle*/
+};
+typedef struct Background Background;
 
-typedef struct{
-SDL_Rect posback;
-SDL_Rect posbutgame;
-SDL_Rect posbutsettings;
-SDL_Rect posbutshop;
-SDL_Rect posbutgame2;
-SDL_Rect posbutsettings2;
-SDL_Rect posbutshop2;
-SDL_Rect posbutcredits2;
-SDL_Rect posbutcredits;
-SDL_Rect posbutsound;
-SDL_Rect posbutmusic;
-SDL_Rect posbutsound2;
-SDL_Rect posbutmusic2;
-SDL_Rect posbuthelp;
-SDL_Rect posbutquit;
-SDL_Rect posbutquit2;
-}menuPosComponents;
+int loadBackground(Background *Backg);
+void initBackground(Background *Backg);
+void freeBackground(Background *Backg);
+void blitBackground(Background*Backg,SDL_Surface *screen);
 
-typedef struct {
-   SDL_Surface *map;
-   SDL_Rect posMap;
-}backgroundMaps;
-
-void initMenu(menuComponents * mc, menuPosComponents * mpc);
-void showMenu(menuComponents  mc, menuPosComponents mpc, SDL_Surface *screen);
-void playmu();
-backgroundMaps initMaps();
-
-#endif 
+#endif
