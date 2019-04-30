@@ -8,17 +8,16 @@
 #include "enemy.h"
 #include <time.h>
 typedef struct {
- SDL_Surface * spriteleft;
- SDL_Surface * spriteright;
-}enemy;
-typedef struct{
+  SDL_Surface * spriteleft[4];
+  SDL_Surface * spriteright[5];
   SDL_Rect pmax_enemy;
   SDL_Rect pmin_enemy;
   SDL_Rect position_enemy;
-}enemyPos;
+}enemy;
+
 enemy initEnm ();
-int rand_pos(int pmax,int pmin);
-void moveEnemy(enemyPos * e, SDL_Surface *screen);
-void showEnm(enemyPos *enm, enemy e, SDL_Surface * screen);
-void animEnm (enemy * e, enemyPos ep, SDL_Surface *screen);
+void showEnm(enemy e, SDL_Surface * screen);
+int rand_pos(int pmax, int pmin);
+int moveEnemy(enemy *e, SDL_Surface *screen,SDL_Rect poshero);
+void animEnm (enemy e, SDL_Surface *screen, int asMouvement);
 #endif

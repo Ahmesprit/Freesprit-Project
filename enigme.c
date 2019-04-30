@@ -9,7 +9,7 @@
 enigme initEnigme (){
   enigme e;
   e.f = fopen("lesenigmes.txt", "r");
- e.back = IMG_Load("Resources/letter.jpg");
+ e.back = IMG_Load("letter.jpg");
  return e;
 }
 void showEnigme (enigmeData ed, SDL_Surface *screen, enigme e){
@@ -31,7 +31,7 @@ SDL_Color white = {0,0,0};
 if (TTF_Init() < 0) {
   printf("error\n");
 }else{
-police = TTF_OpenFont("/home/ahmeddebbech/Desktop/tests/Bebas-Regular.ttf", 24);
+police = TTF_OpenFont("Bebas-Regular.ttf", 24);
 if (police == NULL) {
   printf("error dans open font enigma\n");
 }else{
@@ -77,31 +77,32 @@ enigmeData generateEnigme(enigme e){
     fscanf(e.f,"1)%s 2)%s 3)%s -%s\n",ed[i].c1, ed[i].c2, ed[i].c3, ed[i].x);
   }
   strcpy(edata.quest,ed[pos].quest);
-  strcpy (edata.c1 ,strcat(ed[pos].c1, "-1"));
-      strcpy(edata.c2 , strcat(ed[pos].c2, "-2"));
-        strcpy(edata.c3 ,strcat(ed[pos].c3, "-3"));
+  strcpy (edata.c1 ,ed[pos].c1);
+      strcpy(edata.c2 ,ed[pos].c2);
+        strcpy(edata.c3 ,ed[pos].c3);
+          strcpy(edata.x ,ed[pos].x);
   return edata;
 }
 int resolutionEnigme(enigmeData ed, SDL_Event event){
   switch(event.type){
          case SDL_KEYDOWN:
             if(event.key.keysym.sym == SDLK_1){
-             if (strcmp (ed.c1, "bleu") == 0) {
+             if (strcmp (ed.c1, ed.x) == 0) {
                return 1;
              }
             }else{
               if(event.key.keysym.sym == SDLK_2){
-                if (strcmp (ed.c2, "bleu") == 0) {
+                if (strcmp (ed.c2, ed.x) == 0) {
                   return 1;
                 }
              }else{
                if(event.key.keysym.sym == SDLK_3){
-                 if (strcmp (ed.c3, "bleu") == 0) {
+                 if (strcmp (ed.c3, ed.x) == 0) {
                    return 1;
                  }
                }
              }
             }
-            return 0;
 }
+return 0;
 }

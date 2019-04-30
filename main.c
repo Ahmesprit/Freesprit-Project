@@ -5,15 +5,27 @@
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_ttf.h"
 #include "background.h"
-#include "collision.h"
 #include "character.h"
 #include "enemy.h"
 #include "enigme.h"
-#include "management.h"
+#include "utilities.h"
 #include "menubutton.h"
 #include <string.h>
-//this struct is for generat settings of the game
 
+void showFrame(charac c,enemy e, SDL_Surface * timestext, SDL_Rect timePos, SDL_Rect camera,
+backgroundMaps bm, SDL_Surface *screen, char whichDirection, timer *t){
+	c.livestext = updateLives(&c.lives);
+	c.scoretext = updateScore(&c.score);
+	timestext = gameTime(t);
+	SDL_BlitSurface(bm.map, &camera, screen, NULL);
+	  SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+	  SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+	  SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+		SDL_BlitSurface(timestext, NULL, screen, &timePos);
+		showEnm(e,screen);
+	  showChar(c, screen, whichDirection);
+		SDL_Flip(screen);
+}
 int main(){
 menuComponents mc;
 menuPosComponents mpc;
@@ -83,126 +95,296 @@ while(menuNotOver == 0){
                   menuNotOver = 1;
                 }
               break;
-}
-}
+     }
+   }
 }
   if (strcmp(pickFromMenu, "playgame") == 0) {
-    //translation
-    backgroundMaps bm;
-    bm = initMaps();
-    playgame = 1;
-    Mix_Music * stage1;
-     SDL_BlitSurface(bm.splash,NULL, screen, &bm.splashPos);
-     SDL_Flip(screen);
-     Mix_PauseMusic();
-     stage1 = Mix_LoadMUS("Resources/fatrat.mp3");
-     Mix_PlayMusic(stage1,-1);
-    SDL_Delay(2000);
-    //initializing of game
-    SDL_Rect camera;
-    characPos cp;
-    SDL_Rect posback, posLives, posScore;
-    charac c;
-    enemyPos ep;
-    enemy e;
-    entities ent;
-    SDL_Surface * timestext, *livestext, *scoretext;
-    enigme enig;
-    enigmeData ed;
-    int lives = 5;
-    int score = 0;
-    timer t;
-    t.sec = 0;
-    t.min = 0;
-    int x, noscrolling = 1;
-    camera.x = 0;
-    camera.y = 0;
-    camera.w = 960;
-    camera.h = 600;
-    e = initEnm();
-    c = initChar();
-    enig = initEnigme();
-    SDL_EnableKeyRepeat(10, 10);
-    ent = gameEntities();
-    ent.livestext = updateLives(&lives);
-    ent.scoretext = updateScore(&score);
-    SDL_BlitSurface(bm.map, &camera, screen, NULL);
-      SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
-      SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
-      SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
-      showEnm(&ep,e,screen);
-      showChar(&cp,c, screen);
-      ent.timestext = gameTime(&t);
-      SDL_BlitSurface(ent.timestext, NULL, screen, &ent.timePos);
-        SDL_Flip(screen);
-    while(playgame == 1 ){
-      while(SDL_PollEvent(&event) == 1){
-         switch(event.type){
-           case SDL_QUIT:
-               playgame = 0;
-             done =1;
-            break;
-                case SDL_KEYDOWN:
-                   if(event.key.keysym.sym == SDLK_m){
-                    done = 1;
-                    playgame = 0;
-                   }else{
-                     score++;
-                     moveEnemy(&ep, screen);
-                     moveChar(event, &cp.position);
-                     if((cp.position.x >= 930) && ((camera.x <= 4264) && (camera.x >= 0))){
-                       scrolling(&camera, event);
-                     ent.livestext = updateLives(&lives);
-                     ent.scoretext = updateScore(&score);
-                     cp.position.x = 10;
-                       SDL_BlitSurface(bm.map, &camera, screen, NULL);
-                       SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
-                       SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
-                       SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
-                       animEnm(&e, ep,screen);
-                       animChar(&c, cp, screen, event);
-                       SDL_Flip(screen);
-                    }else{
-                      ent.livestext = updateLives(&lives);
-                      ent.scoretext = updateScore(&score);
-                      SDL_BlitSurface(bm.map, &camera, screen, NULL);
-                        SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
-                        SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
-                        SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
-                        animEnm(&e, ep,screen);
-                        animChar(&c, cp, screen, event);
-                        SDL_Flip(screen);
-                    }
-                         if (detectCollPP(bm.mask, cp.position) == 1) {
-                           noscrolling = 0;
-                         }else{
-                    if(detectCollBB(cp.position, ep.position_enemy) == 1){
-                      if(lives == 0){
-                        SDL_Surface * lose;
-                        lose = IMG_Load("Resources/lose.jpg");
-                        SDL_Rect poslose = {0,0,lose->h, lose->w};
-                        SDL_BlitSurface(lose, NULL, screen, &poslose);
-                        SDL_Flip(screen);
-                     }else{
-                       lives--;
-                       ent.livestext = updateLives(&lives);
-                       ent.scoretext = updateScore(&score);
-                       cp.position.x -= 40;
-                       cp.position.y -= 40;
-                       SDL_BlitSurface(bm.map, &camera, screen, NULL);
-                         SDL_BlitSurface(ent.livestext, NULL, screen, &ent.posLives);
-                         SDL_BlitSurface(ent.scoretext, NULL, screen, &ent.scorePos);
-                         SDL_BlitSurface(ent.hearts, NULL, screen, &ent.posheart);
-                         animEnm(&e, ep,screen);
-                         animChar(&c, cp, screen, event);
-                           SDL_Flip(screen);
-                      }
-                    }
-                   }
-                 }
-                 }
-    }
-  }
+	//declaration and initializing of everything
+		//tranlation..
+		backgroundMaps bm;
+		Mix_Music * stage1;
+		//tranlation..
+		bm = initMaps();
+		SDL_BlitSurface(bm.splash,NULL, screen, &bm.splashPos);
+		SDL_Flip(screen);
+		Mix_PauseMusic();
+		stage1 = Mix_LoadMUS("Resources/stage1-egypt.mp3");
+		Mix_PlayMusic(stage1,-1);
+	 SDL_Delay(2000);
+SDL_Rect camera;
+camera.x = 0;
+camera.y = 0;
+camera.w = 960;
+camera.h = 600;
+charac c;
+enemy e;
+enigme enig;
+enigmeData ed;
+SDL_Surface * timestext;
+SDL_Rect timePos;
+timePos.x = 10; timePos.y = 0;
+char  whichDirection = 'r';
+int x,playgame = 1,asMovement = 0, dontscroll = 0;
+	b = restore();
+	sta = restoreState();
+timer t;
+t.sec = 0;
+t.min = 3;
+t.ticker = 0;
+e = initEnm();
+c = initChar();
+int inWhichDir;
+c.lives = sta.hearts;
+c.s.shield = sta.shield,
+c.s.coins = sta.coins;
+c.score = 0;
+enig = initEnigme();
+SDL_EnableKeyRepeat(120, 10);
+showFrame(c,e,timestext, timePos,camera,bm,screen, whichDirection,&t);
+SDL_Flip(screen);
+			//with keyboard
+	   	if(b.mode == 0){
+        while(playgame == 1){
+			SDL_PollEvent(&event);
+			   switch(event.type){
+					 case SDL_QUIT:
+							 playgame = 0;
+						 done =1;
+						break;
+						case SDL_KEYUP:
+						showFrame(c,e,timestext, timePos,camera,bm,screen, whichDirection, &t);
+            SDL_Flip(screen);
+						break;
+						case SDL_KEYDOWN:
+	             if(event.key.keysym.sym == SDLK_q){
+	              done = 1;
+	              playgame = 0;
+							}else{
+	                moveChar(event, &c.positionChar, inWhichDir);
+								 moveEnemy(&e, screen,c.positionChar);
+									//back: w15984 h600
+                 if((c.positionChar.x >= 480) && (camera.x < 15984-960)){
+									 //scrolling
+									 c.positionChar.x = 480;
+									  scrolling(&camera, event);
+										SDL_BlitSurface(bm.mask, &camera, screen, NULL);
+										if (detectCollPP(bm.mask,c,screen) == 1){
+                      if(event.key.keysym.sym == SDLK_SPACE){
+												inWhichDir = 1;
+												printf("space\n");
+											}else{
+												if(event.key.keysym.sym == SDLK_RIGHT){
+													printf("right\n");
+													inWhichDir = 2;
+												}else{
+													if(event.key.keysym.sym == SDLK_LEFT){
+														inWhichDir = 3;
+														printf("left\n");
+
+													}else{
+														if(event.key.keysym.sym == SDLK_DOWN){
+															inWhichDir = 4;
+															printf("down\n");
+
+														}
+													}
+												}
+											}
+											 printf("coll\n" );
+									   }else{
+											 inWhichDir = 0;
+										 }
+									 if(detectCollBB(c.positionChar, e.position_enemy) == 1){
+										 c.positionChar.x -= 150;
+										 c.lives--;
+									 }
+									   c.livestext = updateLives(&c.lives);
+		                 c.scoretext = updateScore(&c.score);
+		                 timestext = gameTime(&t);
+		                 SDL_BlitSurface(bm.map, &camera, screen, NULL);
+		                   SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+		                   SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+		                   SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+		                   SDL_BlitSurface(timestext, NULL, screen, &timePos);
+											 showEnm(e,screen);
+											 whichDirection = animChar(c,screen, event,whichDirection);
+											 SDL_Flip(screen);
+								 }else{
+									 if((c.positionChar.x <= 50) && (camera.x != 0)){
+										 //scrolling
+										 c.positionChar.x = 50;
+										  scrolling(&camera, event);
+											SDL_BlitSurface(bm.mask, &camera, screen, NULL);
+											if (detectCollPP(bm.mask,c,screen) == 1){
+	                      if(event.key.keysym.sym == SDLK_SPACE){
+													inWhichDir = 1;
+													printf("up\n" );
+												}else{
+													if(event.key.keysym.sym == SDLK_RIGHT){
+														inWhichDir = 2;
+														printf("right\n");
+													}else{
+														if(event.key.keysym.sym == SDLK_LEFT){
+															inWhichDir = 3;
+															printf("left\n");
+														}else{
+															if(event.key.keysym.sym == SDLK_DOWN){
+																inWhichDir = 4;
+																printf("down\n");
+															}
+														}
+													}
+												}
+												 printf("coll\n" );
+										   }else{
+												 inWhichDir = 0;
+											 }
+											if(detectCollBB(c.positionChar,e.position_enemy) == 1){
+												c.positionChar.x -= 150;
+												c.lives--;
+											}
+										   c.livestext = updateLives(&c.lives);
+			                 c.scoretext = updateScore(&c.score);
+			                 timestext = gameTime(&t);
+			                 SDL_BlitSurface(bm.map, &camera,     screen, NULL);
+			                   SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+			                   SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+			                   SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+			                   SDL_BlitSurface(timestext, NULL, screen, &timePos);
+												 showEnm(e,screen);
+												 whichDirection = animChar(c, screen, event,whichDirection);
+			                   SDL_Flip(screen);
+									 }else{
+										 //no scroll
+										 SDL_BlitSurface(bm.mask, &camera, screen, NULL);
+										 if (detectCollPP(bm.mask,c,screen) == 1){
+                       if(event.key.keysym.sym == SDLK_SPACE){
+ 												inWhichDir = 1;
+												printf("up\n");
+ 											}else{
+ 												if(event.key.keysym.sym == SDLK_RIGHT){
+													printf("right\n");
+ 													inWhichDir = 2;
+ 												}else{
+ 													if(event.key.keysym.sym == SDLK_LEFT){
+ 														inWhichDir = 3;
+														printf("left\n" );
+ 													}else{
+ 														if(event.key.keysym.sym == SDLK_DOWN){
+ 															inWhichDir = 4;
+															printf("down\n");
+ 														}
+ 													}
+ 												}
+ 											}
+ 											 printf("coll\n" );
+ 									   }else{
+ 											 inWhichDir = 0;
+ 										 }
+										 if(detectCollBB(c.positionChar, e.position_enemy) == 1){
+											 c.positionChar.x -= 150;
+											 c.lives--;
+										 }
+										 c.livestext = updateLives(&c.lives);
+										 c.scoretext = updateScore(&c.score);
+										 timestext = gameTime(&t);
+										 SDL_BlitSurface(bm.map, &camera, screen, NULL);
+											 SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+											 SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+											 SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+											 SDL_BlitSurface(timestext, NULL, screen, &timePos);
+                        showEnm(e,screen);
+												whichDirection = animChar(c,screen, event, whichDirection);
+											 SDL_Flip(screen);
+									 }
+								 }
+				     }
+        }
+	}
+      }else{
+				//with mouse
+         if(b.mode == 1){
+					/* while(playgame == 1){
+	 			SDL_PollEvent(&event);
+	 			   switch(event.type){
+	 					 case SDL_QUIT:
+	 							 playgame = 0;
+	 						 done =1;
+	 						break;
+							case SDL_MOUSEBUTTONUP:
+							showFrame(c,e,timestext, timePos,camera,bm,screen, whichDirection, &t);
+							SDL_Flip(screen);
+							break;
+	 						case SDL_MOUSEBUTTONDOWN:
+	 	               moveEnemy(&e, screen,c.positionChar);
+									 moveCharByMouse(screen, &c.positionChar,event, whichDirection);
+	 									//back: w15984 h600
+	                  if((c.positionChar.x >= 480) && (camera.x < 15984-960)){
+	 									 //scrolling
+	 									 c.positionChar.x = 480;
+	 									  scrolling(&camera, event);
+	 									   c.livestext = updateLives(&c.lives);
+	 		                 c.scoretext = updateScore(&c.score);
+	 		                 timestext = gameTime(&t);
+	 		                 SDL_BlitSurface(bm.map, &camera, screen, NULL);
+	 		                   SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+	 		                   SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+	 		                   SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+	 		                   SDL_BlitSurface(timestext, NULL, screen, &timePos);
+	 											 if (detectCollPP(bm.mask, c.positionChar) == 1){
+	  												printf("coll\n");
+	  												c.positionChar.x -= 5;
+	  											}else{
+														if(detectCollBB(c.positionChar, e.position_enemy) == 1){
+															c.positionChar.x -= 150;
+															c.lives--;
+														}
+													}
+	 											 animEnm(e,screen, asMovement);
+												 SDL_Delay(100);
+	 		                   whichDirection = animCharMouse(c,screen, event);
+	 		                   SDL_Flip(screen);
+	 								 }else{
+	 									 if((c.positionChar.x <= 50) && (camera.x != 0)){
+	 										 //scrolling
+	 										 c.positionChar.x = 50;
+	 										  scrolling(&camera, event);
+	 										   c.livestext = updateLives(&c.lives);
+	 			                 c.scoretext = updateScore(&c.score);
+	 			                 timestext = gameTime(&t);
+	 			                 SDL_BlitSurface(bm.map, &camera, screen, NULL);
+	 			                   SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+	 			                   SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+	 			                   SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+	 			                   SDL_BlitSurface(timestext, NULL, screen, &timePos);
+	 			                   animEnm(e,screen,asMovement);
+	 			                   whichDirection = animChar(c, screen, event,whichDirection);
+	 			                   SDL_Flip(screen);
+	 												 if (detectCollPP(bm.mask, c.positionChar) == 1) {
+	 			                     printf("coll\n");
+	 			                   }
+	 									 }else{
+	 										 //no scroll
+	 										 c.livestext = updateLives(&c.lives);
+	 										 c.scoretext = updateScore(&c.score);
+	 										 timestext = gameTime(&t);
+	 										 SDL_BlitSurface(bm.map, &camera, screen, NULL);
+	 											 SDL_BlitSurface(c.livestext, NULL, screen, &c.posLives);
+	 											 SDL_BlitSurface(c.scoretext, NULL, screen, &c.scorePos);
+	 											 SDL_BlitSurface(c.hearts, NULL, screen, &c.posheart);
+	 											 SDL_BlitSurface(timestext, NULL, screen, &timePos);
+	 											 animEnm(e,screen, asMovement);
+	 											 whichDirection = animChar(c, screen, event,whichDirection);
+	 											 SDL_Flip(screen);
+	 											 if (detectCollPP(bm.mask, c.positionChar) == 1) {
+	 		                     printf("coll\n");
+	 		                   }
+	 									 }
+	 								 }
+	 				     }
+	         }*/
+				 }
+       }
 }else{
 	if (strcmp(pickFromMenu, "settings") == 0) {
     SDL_PollEvent(&event);

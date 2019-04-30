@@ -23,9 +23,6 @@ backup restore(){
   }else{
     printf("already created\n");
     fread(&b, sizeof(b),1, f);
-    printf("%d\n", b.sound);
-    printf("%d\n", b.music);
-    printf("%d\n", b.mode);
   }
   fclose(f);
   return b;
@@ -34,10 +31,10 @@ settings initSettings(){
   settings set;
 	set.back = IMG_Load("Resources/backsettings.png");
 	set.backbut = IMG_Load("Resources/back.png");
-	set.sound = IMG_Load("Resources/volume.png");
-	set.sound2 = IMG_Load("Resources/volume2.png");
-	set.music = IMG_Load("Resources/music.png");
-	set.music2 = IMG_Load("Resources/music2.png");
+	set.sound = IMG_Load("Resources/switchon.png");
+	set.sound2 = IMG_Load("Resources/switchoff.png");
+	set.music = IMG_Load("Resources/switchon.png");
+	set.music2 = IMG_Load("Resources/switchoff.png");
 	set.joy = IMG_Load("Resources/joy.png");
 	set.key = IMG_Load("Resources/key.png");
 	set.mou = IMG_Load("Resources/mou.png");
@@ -195,27 +192,6 @@ int clicksHelp(help h, SDL_Event event){
 	}else{
 		return 0 ;
 	}
-}
-state restoreState(){
-  state s;
-  FILE *f = NULL;
-  f = fopen("state.bin", "rb");
-  if(f == NULL){
-    printf("creating a state file\n");
-    f = fopen("state.bin", "wb");
-    s.shield = 0;
-    s.hearts = 5;
-    s.highscore = 0;
-    s.higherjumps = 0;
-    s.enigmahelp = 0;
-    s.coins = 0;
-    fwrite(&s, 1, sizeof(s), f);
-    fclose(f);
-  }else{
-    fread(&s,sizeof(s),1, f);
-    fclose(f);
-  }
-  return s;
 }
 shop initShop(){
   shop sh;
