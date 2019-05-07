@@ -1,169 +1,232 @@
-#include <stdio.h>
+/**
+* @file main.c
+* @brief Testing Program.
+* @author C Team
+* @version 0.1
+* @date Apr 01, 2015
+*
+* Testing program for multiplayer
+*
+*/
 #include <stdlib.h>
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
-#include "SDL/SDL_mixer.h"
-#include "SDL/SDL_ttf.h"
-#include "impl.h"
-
-void onMap(SDL_Event event, SDL_Rect *headPos, SDL_Rect obj){
-  switch (event.key.keysym.sym){
-case SDLK_RIGHT:
-     headPos->x = headPos->x + 1;
-     break;
-case SDLK_LEFT:
-     headPos->x = headPos->x - 1;
-     break;
-}
-}
-void scrolling (SDL_Rect * camera, SDL_Event event, SDL_Rect *headPos, SDL_Rect obj){
+#include <stdlib.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL.h>
+void scrolling (SDL_Rect * camera1, SDL_Rect * camera2, SDL_Event event){
         switch (event.key.keysym.sym){
 	case SDLK_RIGHT:
-       camera->x = camera->x + 100;
+       camera1->x = camera1->x +30;
 	break;
+
 	case SDLK_LEFT:
-       camera->x = camera->x - 100;
+       camera1->x = camera1->x -30;
 	break;
+  case SDLK_z:
+       camera2->x = camera2->x +30;
+  break;
+
+  case SDLK_a:
+       camera2->x = camera2->x -30;
+  break;
  }
 }
-int main() {
-int x = 0;
-SDL_Surface *screen;
-SDL_Surface * back;
-SDL_Rect pos;
-if(SDL_Init(SDL_INIT_VIDEO)!=0){
-printf("unable to initialize SDL:%s \n",SDL_GetError());
-return 1;
+void onMap(SDL_Event event, SDL_Rect *headPos, SDL_Rect obj){
+  obj.x = obj.x + 500;
+     headPos->x = (float)(obj.x * 789)/15984;
 }
-screen = SDL_SetVideoMode(960,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
-if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS,1024)==-1){
-printf("No sounds %s\n",Mix_GetError());
-        return 1;
-}
-SDL_WM_SetCaption( "Freesprit", NULL);
-int done = 0;
-SDL_Event event;
-SDL_Surface * obj1, *completed;
-SDL_Surface * line;
-SDL_Surface * head;
-SDL_Rect linePos;
-SDL_Rect rect1;
-SDL_Rect camera;
-SDL_Rect headPos, completedPos;
-back = IMG_Load("backgroundstage1.png");
-obj1 = IMG_Load("obj1.jpg");
-head = IMG_Load("head.png");
-completed = IMG_Load("stagecompleted.png");
-rect1.x = 700;
-rect1.y = 300;
-rect1.h = obj1->h;
-rect1.w = obj1->w;
-camera.x = 0;
-camera.y = 0;
-camera.h = 600;
-camera.w = 960;
-completedPos.x = 0;
-completedPos.y = 0;
-completedPos.h = 600;
-completedPos.w = 960;
-line = IMG_Load("line.png");
-linePos.x = 50;
-linePos.y = 500;
-linePos.h = line->h;
-linePos.w = line->w;
-headPos.x = 80;
-headPos.y = 550;
-headPos.h = head->h;
-headPos.w = head->w;
-pos.x = 0; pos.y = 0; pos.h =back->h; pos.w= back->w;
-SDL_BlitSurface(back, &camera, screen, &pos);
-SDL_BlitSurface(obj1, NULL, screen, &rect1);
-SDL_BlitSurface(line, NULL, screen, &linePos);
-SDL_BlitSurface(head, NULL, screen, &headPos);
-SDL_Flip(screen);
-SDL_EnableKeyRepeat(120, 100);
-//Game loop starts
-while (done == 0){
-  while(SDL_PollEvent(&event) == 1){
-    x=0;
-  switch (event.key.keysym.sym){
-         case SDLK_UP:
-          rect1.y-=10;
-  break;
-         case SDLK_DOWN:
-         rect1.y+=10;
-  break;
-  case SDLK_RIGHT:
-         rect1.x+=10;
-  break;
-  case SDLK_LEFT:
-         rect1.x-=10;
-  break;
-   }
+int main(int argc, char *argv[])
+{
+SDL_Init(SDL_INIT_VIDEO);
+SDL_Surface* pScreen = SDL_SetVideoMode(1000,1000,32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 0, 0, 0));
+SDL_ShowCursor(SDL_DISABLE);
+ SDL_Event event;
+//load
+SDL_Surface* pImage1 = IMG_Load("backgroundstage1.png");
+SDL_Surface* pImage2 = IMG_Load("backgroundstage1.png");
+SDL_Surface* perso1 = IMG_Load ("1.png");
+SDL_Surface* perso2 = IMG_Load ("obj2.png");
+SDL_Surface * head = IMG_Load("head.png");
+SDL_Surface * obj = IMG_Load("obj.png");
+SDL_Surface * line = IMG_Load("line.png");
 
-SDL_BlitSurface(back, &camera, screen, &pos);
-SDL_BlitSurface(obj1, NULL, screen, &rect1);
-SDL_BlitSurface(line, NULL, screen, &linePos);
-SDL_BlitSurface(head, NULL, screen, &headPos);
-   SDL_Flip(screen);
-   //back: w15984 h600
-                if((rect1.x >= 480) && (camera.x < 15984-960)){
-                  //scrolling
-                  rect1.x = 480;
-                   scrolling(&camera, event, &headPos,rect1);
-                   onMap(event, &headPos, rect1);
-                   SDL_BlitSurface(back, &camera, screen, &pos);
-                   SDL_BlitSurface(obj1, NULL, screen, &rect1);
-                   SDL_BlitSurface(line, NULL, screen, &linePos);
-                   SDL_BlitSurface(head, NULL, screen, &headPos);
-                      SDL_Flip(screen);
-                }else{
-                  if(camera.x > 15984-960){
-                        back= IMG_Load("backgroundstage2.png");
-                        camera.x = 0;
-                        camera.y = 0;
-                        camera.h = 600;
-                        camera.w = 960;
-                        pos.x = 0; pos.y = 0; pos.h =back->h; pos.w= back->w;
-                        obj1 = IMG_Load("obj2.png");
-                        SDL_BlitSurface(completed, NULL, screen, &completedPos);
-                        SDL_Flip(screen);
-                        SDL_Delay(1000);
-                        rect1.x = 700;
-                        rect1.y = 300;
-                        rect1.h = obj1->h;
-                        rect1.w = obj1->w;
-                        headPos.x = 80;
-                        headPos.y = 550;
-                        headPos.h = head->h;
-                        headPos.w = head->w;
+//positions
+SDL_Rect pos_screen1,pos_screen2,pos_perso1,pos_perso2, posline, poshead, posobj, camera1, camera2;
+int continuer=1;
+camera1.x = 0;
+camera1.h = 500;
+camera1.w = 1000;
+camera1.y = 0;
+camera2.x = 0;
+camera2.y = 0;
+camera2.h = 500;
+camera2.w = 1000;
+pos_screen1.x = 0;
+pos_screen1.y = 0;
+pos_screen2.x=0;
+pos_screen2.y=500; // y/2
+pos_perso1.x=100;
+pos_perso1.y=200;
+pos_perso2.x=100;
+pos_perso2.y=700;
+posline.y = 500;
+posline.x = 100;
+poshead.y = 530;
+poshead.x = 100;
+posobj.y = 530;
+posobj.x = 100;
+//fill_blit_flip
+SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+SDL_EnableKeyRepeat(10,10);
+SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+SDL_BlitSurface(line,NULL,pScreen,&posline);
+SDL_BlitSurface(head,NULL,pScreen,&poshead);
+SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+SDL_Flip(pScreen);
+ while (continuer == 1){
+     SDL_WaitEvent(&event);
+     switch(event.type){
+         case SDL_QUIT:
+             continuer = 0;
+             break;
+          case SDL_KEYDOWN:
+             //First Scenario 1
+             if(event.key.keysym.sym == SDLK_RIGHT){
+               pos_perso1.x += 10;
+             }else{
+               if(event.key.keysym.sym == SDLK_LEFT){
+                 pos_perso1.x -= 10;
+               }else{
+                 if(event.key.keysym.sym == SDLK_a){
+                   pos_perso2.x -= 10;
+                 }else{
+                   if(event.key.keysym.sym == SDLK_z){
+                     pos_perso2.x += 10;
+                   }
+                 }
+               }
+             }
+          if((pos_perso1.x >= 500) &&  (camera1.x < 15984-1000)){
+            //scrolling
+            pos_perso1.x = 500;
+            scrolling(&camera1, &camera2, event);
+            onMap(event, &poshead, camera1);
+            SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+            SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+            SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+            SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+            SDL_BlitSurface(line,NULL,pScreen,&posline);
+            SDL_BlitSurface(head,NULL,pScreen,&poshead);
+            SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+            SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+            SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+            SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+            SDL_Flip(pScreen);
+          }else{
+           //Second scenario 2
+          if((pos_perso1.x <= 50) && (camera1.x != 0)){
+             //scrolling
+             pos_perso1.x = 50;
+             scrolling(&camera1, &camera2, event);
+             onMap(event, &poshead, camera1);
+             SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+             SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+             SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+             SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+             SDL_BlitSurface(line,NULL,pScreen,&posline);
+             SDL_BlitSurface(head,NULL,pScreen,&poshead);
+             SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+             SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+             SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+             SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+             SDL_Flip(pScreen);
+          }else{
+             //Third Scenario 3
+             //no scroll
+             SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+             SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+             SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+             SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+             SDL_BlitSurface(line,NULL,pScreen,&posline);
+             SDL_BlitSurface(head,NULL,pScreen,&poshead);
+             SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+             SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+             SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+             SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+             SDL_Flip(pScreen);
+          }
+         }
+         //second screen
+         if((pos_perso2.x >= 500) &&  (camera2.x < 15984-1000)){
+           //scrolling
+           pos_perso2.x = 500;
+           scrolling(&camera1, &camera2, event);
+           onMap(event, &posobj, camera2);
+           SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+           SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+           SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+           SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+           SDL_BlitSurface(line,NULL,pScreen,&posline);
+           SDL_BlitSurface(head,NULL,pScreen,&poshead);
+           SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+           SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+           SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+           SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+           SDL_Flip(pScreen);
+         }else{
+          //Second scenario 2
+         if((pos_perso2.x <= 50) && (camera2.x != 0)){
+            //scrolling
+            pos_perso2.x = 50;
+            scrolling(&camera1, &camera2, event);
+            onMap(event, &posobj, camera2);
+            SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+            SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+            SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+            SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+            SDL_BlitSurface(line,NULL,pScreen,&posline);
+            SDL_BlitSurface(head,NULL,pScreen,&poshead);
+            SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+            SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+            SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+            SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+            SDL_Flip(pScreen);
+         }else{
+            //Third Scenario 3
+            //no scroll
+            SDL_FillRect(pScreen, NULL, SDL_MapRGB(pScreen->format, 255, 255, 255));
+            SDL_BlitSurface(pImage1,&camera1,pScreen,&pos_screen1);
+            SDL_BlitSurface(pImage2,&camera2,pScreen,&pos_screen2);
+            SDL_BlitSurface (perso1,NULL,pScreen,&pos_perso1);
+            SDL_BlitSurface(line,NULL,pScreen,&posline);
+            SDL_BlitSurface(head,NULL,pScreen,&poshead);
+            SDL_BlitSurface(obj,NULL,pScreen,&posobj);
+            SDL_SetColorKey(perso1, SDL_SRCCOLORKEY, SDL_MapRGB(perso1->format, 255, 255,255));
+            SDL_BlitSurface (perso2,NULL,pScreen,&pos_perso2);
+            SDL_SetColorKey(perso2, SDL_SRCCOLORKEY, SDL_MapRGB(perso2->format, 255, 255,255));
+            SDL_Flip(pScreen);
+         }
+         }
 
-                  }else{
-                  if((rect1.x <= 50) && (camera.x != 0)){
-                    //scrolling
-                     scrolling(&camera, event,&headPos,rect1);
-                     onMap(event, &headPos, rect1);
-                     SDL_BlitSurface(back, &camera, screen, &pos);
-                     SDL_BlitSurface(obj1, NULL, screen, &rect1);
-                     SDL_BlitSurface(line, NULL, screen, &linePos);
-                     SDL_BlitSurface(head, NULL, screen, &headPos);
-                     SDL_Flip(screen);
-                  }else{
-                    //no scroll
-                    onMap(event, &headPos, rect1);
-                    SDL_BlitSurface(back, &camera, screen, &pos);
-                    SDL_BlitSurface(obj1, NULL, screen, &rect1);
-                    SDL_BlitSurface(line, NULL, screen, &linePos);
-                    SDL_BlitSurface(head, NULL, screen, &headPos);
-                      SDL_Flip(screen);
-                  }
-                }
-                }
-}
-}
-//end game loop
-SDL_FreeSurface(screen);
+        break;
+     }
+ }
+
+//free
+SDL_FreeSurface(pImage1);
+SDL_FreeSurface(pImage2);
+
 SDL_Quit();
 
-return 0;
+
+    return EXIT_SUCCESS;
+
 }
